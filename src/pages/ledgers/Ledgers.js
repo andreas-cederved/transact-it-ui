@@ -99,23 +99,6 @@ export default () => {
           </Grid>
         </Container>
       </main>
-      {/* Footer */}
-      <footer className={classes.footer}>
-        <Typography variant="h6" align="center" gutterBottom>
-          About TransactIt
-        </Typography>
-        <Typography
-          variant="subtitle1"
-          align="center"
-          color="textSecondary"
-          component="p"
-        >
-          Free open source double entry bookkeeping system built on top of other
-          excellent open source libraries such as asp.net core, react and
-          material-ui.
-        </Typography>
-      </footer>
-      {/* End footer */}
     </React.Fragment>
   );
 };

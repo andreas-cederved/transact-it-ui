@@ -24,6 +24,10 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     flexGrow: 1
+  },
+  footer: {
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(6)
   }
 }));
 
@@ -50,8 +54,25 @@ export default () => {
           </Toolbar>
         </AppBar>
         <Box pt={9}>
-          <Container maxWidth="lg">
+          <Container maxWidth="xl">
             <Router routes={routes} />
+            {/* Footer */}
+            <footer className={classes.footer}>
+              <Typography variant="h6" align="center" gutterBottom>
+                About TransactIt
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                align="center"
+                color="textSecondary"
+                component="p"
+              >
+                Free open source double entry bookkeeping system built on top of
+                other excellent open source libraries such as asp.net core,
+                react and material-ui.
+              </Typography>
+            </footer>
+            {/* End footer */}
           </Container>
         </Box>
       </div>
