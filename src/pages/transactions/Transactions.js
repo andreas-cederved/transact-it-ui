@@ -1,10 +1,23 @@
 import React, { useState, useEffect } from "react";
 import clsx from "clsx";
-import { Grid, makeStyles, Paper } from "@material-ui/core";
+import {
+  Button,
+  Container,
+  Grid,
+  makeStyles,
+  Paper,
+  Typography
+} from "@material-ui/core";
 import LatestTransactions from "./LatestTransactions";
-import Sales from "./Sales";
 
 const useStyles = makeStyles(theme => ({
+  heroContent: {
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(8, 0, 6)
+  },
+  heroButtons: {
+    marginTop: theme.spacing(4)
+  },
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4)
@@ -42,23 +55,53 @@ export default ({ params }) => {
   }, [params]);
 
   return (
-    <Grid container spacing={3}>
-      {/* Chart */}
-      <Grid item xs={12} md={8} lg={9}>
-        <Paper className={fixedHeightPaper}></Paper>
+    <>
+      <main>
+        {/* Hero unit */}
+        <div className={classes.heroContent}>
+          <Container maxWidth="sm">
+            <Typography
+              component="h1"
+              variant="h2"
+              align="center"
+              color="textPrimary"
+              gutterBottom
+            >
+              Transaction collection
+            </Typography>
+            <Typography
+              variant="h5"
+              align="center"
+              color="textSecondary"
+              paragraph
+            >
+              View the latests transaction in the collection below. Or create a
+              new one!
+            </Typography>
+            <div className={classes.heroButtons}>
+              <Grid container spacing={2} justify="center">
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    href={`/create-transaction/${params[0]}`}
+                  >
+                    CREATE TRANSACTION
+                  </Button>
+                </Grid>
+              </Grid>
+            </div>
+          </Container>
+        </div>
+      </main>
+      <Grid container spacing={3}>
+        {/* Recent Transactions */}
+        <Grid item xs={12}>
+          <Paper className={classes.paper}>
+            <LatestTransactions />
+          </Paper>
+        </Grid>
       </Grid>
-      {/* Recent Sales */}
-      <Grid item xs={12} md={4} lg={3}>
-        <Paper className={fixedHeightPaper}>
-          <Sales />
-        </Paper>
-      </Grid>
-      {/* Recent Transactions */}
-      <Grid item xs={12}>
-        <Paper className={classes.paper}>
-          <LatestTransactions />
-        </Paper>
-      </Grid>
-    </Grid>
+    </>
   );
 };
