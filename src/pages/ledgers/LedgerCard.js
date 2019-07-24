@@ -43,10 +43,14 @@ export default ({ ledger }) => {
         </CardContent>
         <CardActions>
           <Button size="small" color="primary" href={`/Accounts/${ledger.id}`}>
-            Select
+            Accounts
           </Button>
-          <Button size="small" color="primary">
-            Edit
+          <Button
+            size="small"
+            color="primary"
+            href={`/Transactions/${ledger.id}`}
+          >
+            Transactions
           </Button>
         </CardActions>
       </Card>
