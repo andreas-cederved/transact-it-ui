@@ -174,6 +174,37 @@ export default ({ params }) => {
     }
   };
 
+  const handleSubmit = () => {
+    (async () => {
+      const res = await fetch(
+        `https://localhost:44304/api/ledgers/${params[0]}/transactions`,
+        {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+          },
+          mode: "cors",
+          body: JSON.stringify({
+            description: transaction.description,
+            transactionDate: transaction.date,
+            accountingEntries: transaction.entries.map(entry => {
+              let result = {
+                accountId: Number(entry.accountId),
+                amount: Number(entry.amount),
+                side: entry.side ? 1 : 0
+              };
+              return result;
+            })
+          })
+        }
+      );
+      if (res.ok) {
+        window.location.replace(`/Transactions/${params[0]}`);
+      }
+    })();
+  };
+
   if (isLoading) {
     return (
       <div style={{ display: "flex", justifyContent: "center" }}>
@@ -197,49 +228,43 @@ export default ({ params }) => {
             ))}
           </Stepper>
           <React.Fragment>
-            {activeStep === steps.length ? (
-              <React.Fragment>
-                <Typography variant="h5" gutterBottom>
-                  Thank you for your order.
-                </Typography>
-                <Typography variant="subtitle1">
-                  Your order number is #2001539. We have emailed your order
-                  confirmation, and will send you an update when your order has
-                  shipped.
-                </Typography>
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                {getStepContent(activeStep)}
-                <div className={classes.buttons}>
-                  {activeStep === 1 && (
-                    <Button
-                      variant="contained"
-                      color="default"
-                      onClick={handleAddEntry}
-                      className={classes.button}
-                    >
-                      Add entry
-                    </Button>
-                  )}
-                  {activeStep !== 0 && (
-                    <Button onClick={handleBack} className={classes.button}>
-                      Back
-                    </Button>
-                  )}
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleNext}
-                    className={classes.button}
-                  >
-                    {activeStep === steps.length - 1
-                      ? "Submit transaction"
-                      : "Next"}
-                  </Button>
-                </div>
-              </React.Fragment>
-            )}
+            {getStepContent(activeStep)}
+            <div className={classes.buttons}>
+              {activeStep === 1 && (
+                <Button
+                  variant="contained"
+                  color="default"
+                  onClick={handleAddEntry}
+                  className={classes.button}
+                >
+                  Add entry
+                </Button>
+              )}
+              {activeStep !== 0 && (
+                <Button onClick={handleBack} className={classes.button}>
+                  Back
+                </Button>
+              )}
+              {activeStep === steps.length - 1 ? (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSubmit}
+                  className={classes.button}
+                >
+                  Submit transaction
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleNext}
+                  className={classes.button}
+                >
+                  Next
+                </Button>
+              )}
+            </div>
           </React.Fragment>
         </Paper>
       </main>
