@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import clsx from "clsx";
 import {
   Button,
+  CircularProgress,
   Container,
   Grid,
   makeStyles,
-  Paper,
   Typography
 } from "@material-ui/core";
 import LatestTransactions from "./LatestTransactions";
@@ -22,21 +21,16 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4)
   },
-  paper: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column"
-  },
-  fixedHeight: {
-    height: 240
+  cardGrid: {
+    paddingTop: theme.spacing(8),
+    paddingBottom: theme.spacing(8)
   }
 }));
 
 export default ({ params }) => {
   if (!params.length) return null;
   const classes = useStyles();
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  const [isLoading, setLoading] = useState(true);
   const [ledger, setLedgerData] = useState(null);
 
   useEffect(() => {
@@ -46,13 +40,42 @@ export default ({ params }) => {
         `https://localhost:44304/api/ledgers/${params[0]}`
       );
       const ledger = await res.json();
-      if (mounted) setLedgerData(ledger);
+      if (mounted) {
+        setLedgerData(ledger);
+        setLoading(false);
+      }
     })();
     const cleanup = () => {
       mounted = false;
     };
     return cleanup;
   }, [params]);
+
+  const mapAccounts = mainAccountGroups => {
+    let result = mainAccountGroups
+      .map(mag => {
+        return mag.subAccountGroups.map(sag => {
+          return sag.accounts;
+        });
+      })
+      .flat(2);
+
+    return result;
+  };
+
+  const compareIdentifyingCode = (a, b) => {
+    if (a.identifyingCode < b.identifyingCode) return 1;
+    if (b.identifyingCode < a.identifyingCode) return -1;
+    return 0;
+  };
+
+  if (isLoading) {
+    return (
+      <div>
+        <CircularProgress />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -94,14 +117,19 @@ export default ({ params }) => {
           </Container>
         </div>
       </main>
-      <Grid container spacing={3}>
-        {/* Recent Transactions */}
-        <Grid item xs={12}>
-          <Paper className={classes.paper}>
-            <LatestTransactions />
-          </Paper>
+      <Container className={classes.cardGrid} maxWidth="md">
+        <Grid container spacing={4}>
+          {ledger.transactions.sort(compareIdentifyingCode).map(transaction => {
+            return (
+              <LatestTransactions
+                key={transaction.id}
+                accounts={mapAccounts(ledger.mainAccountGroups)}
+                transaction={transaction}
+              />
+            );
+          })}
         </Grid>
-      </Grid>
+      </Container>
     </>
   );
 };
