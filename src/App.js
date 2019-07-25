@@ -48,7 +48,7 @@ export default () => {
               <Menu />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-              TransactIt
+              transact-it
             </Typography>
             <Button color="inherit">Login</Button>
           </Toolbar>

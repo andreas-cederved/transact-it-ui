@@ -7,6 +7,7 @@ import {
   Grid,
   IconButton,
   makeStyles,
+  ListItemIcon,
   Menu,
   MenuItem,
   Table,
@@ -17,6 +18,8 @@ import {
 } from "@material-ui/core";
 import { green } from "@material-ui/core/colors";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+import PrintIcon from "@material-ui/icons/Print";
+import CreateIcon from "@material-ui/icons/Create";
 
 const useStyles = makeStyles(theme => ({
   avatar: {
@@ -24,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default ({ accounts, transaction }) => {
+export default ({ accounts, transaction, ledgerId }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -36,11 +39,19 @@ export default ({ accounts, transaction }) => {
     setAnchorEl(null);
   }
 
+  const handleNavigation = url => event => {
+    window.location.href = url;
+  };
+
   const getAccountDisplayName = accountId => {
     let account = accounts.find(acc => {
       return acc.id === accountId;
     });
     return `${account.number} ${account.name}`;
+  };
+
+  const ccyFormat = amount => {
+    return `${amount.toFixed(2)}`;
   };
 
   return (
@@ -68,8 +79,26 @@ export default ({ accounts, transaction }) => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Create template</MenuItem>
-                <MenuItem onClick={handleClose}>Print</MenuItem>
+                <MenuItem
+                  onClick={handleNavigation(
+                    `/create-template/${ledgerId}/${transaction.id}`
+                  )}
+                >
+                  <ListItemIcon>
+                    <CreateIcon />
+                  </ListItemIcon>
+                  Create template
+                </MenuItem>
+                <MenuItem
+                  onClick={handleNavigation(
+                    `/print-transaction/${ledgerId}/${transaction.id}`
+                  )}
+                >
+                  <ListItemIcon>
+                    <PrintIcon />
+                  </ListItemIcon>
+                  Print
+                </MenuItem>
               </Menu>
             </>
           }
@@ -97,11 +126,15 @@ export default ({ accounts, transaction }) => {
                   {entry.side === 1 ? (
                     <>
                       <TableCell align="right"></TableCell>
-                      <TableCell align="right">{entry.amount}</TableCell>
+                      <TableCell align="right">
+                        {ccyFormat(entry.amount)}
+                      </TableCell>
                     </>
                   ) : (
                     <>
-                      <TableCell align="right">{entry.amount}</TableCell>
+                      <TableCell align="right">
+                        {ccyFormat(entry.amount)}
+                      </TableCell>
                       <TableCell align="right"></TableCell>
                     </>
                   )}

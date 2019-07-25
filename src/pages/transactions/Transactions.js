@@ -7,7 +7,7 @@ import {
   makeStyles,
   Typography
 } from "@material-ui/core";
-import LatestTransactions from "./LatestTransactions";
+import TransactionCard from "./TransactionCard";
 
 const useStyles = makeStyles(theme => ({
   heroContent: {
@@ -121,10 +121,11 @@ export default ({ params }) => {
         <Grid container spacing={4}>
           {ledger.transactions.sort(compareIdentifyingCode).map(transaction => {
             return (
-              <LatestTransactions
+              <TransactionCard
                 key={transaction.id}
                 accounts={mapAccounts(ledger.mainAccountGroups)}
                 transaction={transaction}
+                ledgerId={ledger.id}
               />
             );
           })}
