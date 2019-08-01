@@ -13,6 +13,7 @@ import {
 import ReviewTransaction from "./ReviewTransaction";
 import TransactionDetailsForm from "./TransactionDetailsForm";
 import AccountingEntriesForm from "./AccountingEntriesForm";
+import TransactionTypeForm from "./TransactionTypeForm";
 
 const useStyles = makeStyles(theme => ({
   layout: {
@@ -49,6 +50,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const steps = [
+  "Transaction type",
   "Transaction details",
   "Accounting entries",
   "Review transaction"
@@ -61,6 +63,7 @@ export default ({ params }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [isLoading, setLoading] = useState(true);
   const [ledgerData, setData] = useState(null);
+  const [templatesData, setTemplatesData] = useState(null);
   const [transaction, setTransaction] = useState({
     date: "",
     description: "",
@@ -75,18 +78,25 @@ export default ({ params }) => {
         side: true,
         amount: ""
       }
-    ]
+    ],
+    templateId: 0,
+    templateAmount: ""
   });
 
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const res = await fetch(
+      const res1 = await fetch(
         `https://localhost:44304/api/ledgers/${params[0]}`
       );
-      const ledgerData = await res.json();
+      const ledgerData = await res1.json();
+      const res2 = await fetch(
+        `https://localhost:44304/api/ledgers/${params[0]}/transaction-templates`
+      );
+      const templatesData = await res2.json();
       if (mounted) {
         setData(ledgerData);
+        setTemplatesData(templatesData);
         setLoading(false);
       }
     })();
@@ -112,13 +122,24 @@ export default ({ params }) => {
     switch (step) {
       case 0:
         return (
-          <TransactionDetailsForm
-            date={transaction.date}
-            description={transaction.description}
-            handleChange={handleChange}
+          <TransactionTypeForm
+            templates={templatesData}
+            templateId={transaction.templateId}
+            handleChange={handleTemplateIdChange}
           />
         );
       case 1:
+        return (
+          <TransactionDetailsForm
+            templateAmount={transaction.templateAmount}
+            date={transaction.date}
+            description={transaction.description}
+            handleChange={handleChange}
+            handleTemplateAmountChange={handleTemplateAmountChange}
+            showTemplateAmount={transaction.templateId > 0}
+          />
+        );
+      case 2:
         return (
           <AccountingEntriesForm
             accounts={mapAccounts(ledgerData.mainAccountGroups)}
@@ -127,7 +148,7 @@ export default ({ params }) => {
             handleRemoveEntry={handleRemoveEntry}
           />
         );
-      case 2:
+      case 3:
         return (
           <ReviewTransaction
             accounts={mapAccounts(ledgerData.mainAccountGroups)}
@@ -161,6 +182,77 @@ export default ({ params }) => {
   const handleRemoveEntry = idx => {
     let entries = [...transaction.entries].filter((item, j) => idx !== j);
     setTransaction({ ...transaction, entries: entries });
+  };
+
+  const getTemplate = (templates, templateId) => {
+    var template = templates.find(x => {
+      return x.id === templateId;
+    });
+
+    return template;
+  };
+
+  const getDistributionForTemplateIdAndAmount = (templateId, amount) => {
+    let templateAmount = Number(amount);
+    return fetch(
+      `https://localhost:44304/api/transaction-templates/${templateId}/distribution?amount=${templateAmount}`
+    )
+      .then(response => response.json())
+      .then(json => {
+        let result = json.map(x => {
+          return {
+            accountId: x.accountId,
+            side: x.side ? true : false,
+            amount: x.amount
+          };
+        });
+        return result;
+      });
+  };
+
+  const handleTemplateAmountChange = event => {
+    let amount = event.target.value;
+    if (isNaN(amount)) {
+      setTransaction({
+        ...transaction,
+        templateAmount: amount
+      });
+    } else {
+      getDistributionForTemplateIdAndAmount(
+        transaction.templateId,
+        amount
+      ).then(mappedDistribution => {
+        setTransaction({
+          ...transaction,
+          entries: mappedDistribution,
+          templateAmount: amount
+        });
+      });
+    }
+  };
+
+  const handleTemplateIdChange = event => {
+    let template = getTemplate(templatesData, Number(event.target.value));
+
+    if (!template) {
+      setTransaction({
+        ...transaction,
+        templateId: event.target.value
+      });
+    } else {
+      getDistributionForTemplateIdAndAmount(
+        template.id,
+        template.defaultTransactionAmount
+      ).then(mappedDistribution => {
+        setTransaction({
+          ...transaction,
+          description: template.defaultTransactionDescription,
+          entries: mappedDistribution,
+          templateId: template.id,
+          templateAmount: template.defaultTransactionAmount
+        });
+      });
+    }
   };
 
   const handleChange = (name, idx) => event => {
@@ -230,7 +322,7 @@ export default ({ params }) => {
           <React.Fragment>
             {getStepContent(activeStep)}
             <div className={classes.buttons}>
-              {activeStep === 1 && (
+              {activeStep === 2 && (
                 <Button
                   variant="contained"
                   color="default"

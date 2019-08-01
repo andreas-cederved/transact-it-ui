@@ -1,11 +1,5 @@
 import React from "react";
-import { Grid, makeStyles, TextField, Typography } from "@material-ui/core";
-
-const useStyles = makeStyles(theme => ({
-  button: {
-    marginTop: 17
-  }
-}));
+import { Grid, TextField, Typography } from "@material-ui/core";
 
 export default ({
   name,
@@ -14,7 +8,6 @@ export default ({
   defaultTransactionDescription,
   handleChange
 }) => {
-  const classes = useStyles();
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>

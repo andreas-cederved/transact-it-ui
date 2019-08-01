@@ -1,14 +1,14 @@
 import React from "react";
-import { Grid, makeStyles, TextField, Typography } from "@material-ui/core";
+import { Grid, TextField, Typography } from "@material-ui/core";
 
-const useStyles = makeStyles(theme => ({
-  button: {
-    marginTop: 17
-  }
-}));
-
-export default ({ date, description, handleChange }) => {
-  const classes = useStyles();
+export default ({
+  templateAmount,
+  date,
+  description,
+  handleChange,
+  handleTemplateAmountChange,
+  showTemplateAmount
+}) => {
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
@@ -30,7 +30,7 @@ export default ({ date, description, handleChange }) => {
             fullWidth
           />
         </Grid>
-        <Grid item xs={12} sm={8} md={8}>
+        <Grid item xs={12} sm={6} md={6}>
           <TextField
             required
             id="description"
@@ -42,6 +42,20 @@ export default ({ date, description, handleChange }) => {
             fullWidth
           />
         </Grid>
+        {showTemplateAmount && (
+          <Grid item xs={12} sm={2} md={2}>
+            <TextField
+              required
+              id="amount"
+              name="amount"
+              label="Amount"
+              type="number"
+              value={templateAmount}
+              onChange={handleTemplateAmountChange}
+              fullWidth
+            />
+          </Grid>
+        )}
       </Grid>
     </React.Fragment>
   );
