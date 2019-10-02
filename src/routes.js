@@ -3,6 +3,7 @@ import Accounts from "./pages/accounts/Accounts";
 import Transactions from "./pages/transactions/Transactions";
 import CreateTransactionStepper from "./pages/transactions/CreateTransactionStepper";
 import CreateTemplateStepper from "./pages/templates/CreateTemplateStepper";
+import PrintTransaction from "./pages/transactions/PrintTransaction";
 
 export default {
   "/": Ledgers,
@@ -10,5 +11,6 @@ export default {
   Accounts,
   Transactions,
   "create-transaction": CreateTransactionStepper,
-  "create-template": CreateTemplateStepper
+  "create-template": CreateTemplateStepper,
+  "print-transaction": PrintTransaction
 };

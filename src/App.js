@@ -37,41 +37,45 @@ export default () => {
     <React.Fragment>
       <CssBaseline />
       <div className={classes.root}>
-        <AppBar position="fixed">
-          <Toolbar>
-            <IconButton
-              edge="start"
-              className={classes.menuButton}
-              color="inherit"
-              aria-label="Menu"
-            >
-              <Menu />
-            </IconButton>
-            <Typography variant="h6" className={classes.title}>
-              transact-it
-            </Typography>
-            <Button color="inherit">Login</Button>
-          </Toolbar>
-        </AppBar>
+        <Box display="block" displayPrint="none">
+          <AppBar position="fixed">
+            <Toolbar>
+              <IconButton
+                edge="start"
+                className={classes.menuButton}
+                color="inherit"
+                aria-label="Menu"
+              >
+                <Menu />
+              </IconButton>
+              <Typography variant="h6" className={classes.title}>
+                transact-it
+              </Typography>
+              <Button color="inherit">Login</Button>
+            </Toolbar>
+          </AppBar>
+        </Box>
         <Box pt={9}>
           <Container maxWidth="xl">
             <Router routes={routes} />
             {/* Footer */}
-            <footer className={classes.footer}>
-              <Typography variant="h6" align="center" gutterBottom>
-                About TransactIt
-              </Typography>
-              <Typography
-                variant="subtitle1"
-                align="center"
-                color="textSecondary"
-                component="p"
-              >
-                Free open source double entry bookkeeping system built on top of
-                other excellent open source libraries such as asp.net core,
-                react and material-ui.
-              </Typography>
-            </footer>
+            <Box display="block" displayPrint="none">
+              <footer className={classes.footer}>
+                <Typography variant="h6" align="center" gutterBottom>
+                  About TransactIt
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  align="center"
+                  color="textSecondary"
+                  component="p"
+                >
+                  Free open source double entry bookkeeping system built on top
+                  of other excellent open source libraries such as asp.net core,
+                  react and material-ui.
+                </Typography>
+              </footer>
+            </Box>
             {/* End footer */}
           </Container>
         </Box>

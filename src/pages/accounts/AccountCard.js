@@ -49,6 +49,19 @@ export default ({ mainAccountGroup, callback }) => {
     return `${totalBalance.toFixed(2)}`;
   }
 
+  const accountBalanceCalculate = account => {
+    let balance = 0;
+    account.accountingEntries.forEach(entry => {
+      if (entry.side === 0) {
+        balance = balance + entry.amount;
+      } else {
+        balance = balance - entry.amount;
+      }
+    });
+
+    return `${balance.toFixed(2)}`;
+  };
+
   return (
     <Grid item xs={12} sm={12} md={12}>
       <Card className={classes.card}>
@@ -86,7 +99,9 @@ export default ({ mainAccountGroup, callback }) => {
                             <TableCell>
                               {account.number} {account.name}
                             </TableCell>
-                            <TableCell></TableCell>
+                            <TableCell align="right">
+                              {accountBalanceCalculate(account)}
+                            </TableCell>
                           </TableRow>
                         );
                       }
@@ -96,7 +111,9 @@ export default ({ mainAccountGroup, callback }) => {
                           <TableCell className={classes.noBorder}>
                             {account.number} {account.name}
                           </TableCell>
-                          <TableCell className={classes.noBorder}></TableCell>
+                          <TableCell className={classes.noBorder} align="right">
+                            {accountBalanceCalculate(account)}
+                          </TableCell>
                         </TableRow>
                       );
                     })}

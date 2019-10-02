@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Avatar,
+  Box,
   Card,
   CardContent,
   CardHeader,
@@ -64,7 +65,7 @@ export default ({ accounts, transaction, ledgerId }) => {
             </Avatar>
           }
           action={
-            <>
+            <Box display="block" displayPrint="none">
               <IconButton
                 aria-controls="options"
                 aria-haspopup="true"
@@ -100,7 +101,7 @@ export default ({ accounts, transaction, ledgerId }) => {
                   Print
                 </MenuItem>
               </Menu>
-            </>
+            </Box>
           }
           title={transaction.description}
           subheader={`${transaction.transactionDate.substring(
